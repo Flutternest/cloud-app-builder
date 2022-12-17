@@ -161,7 +161,25 @@ class _AddAppFormState extends State<AddAppForm> {
           ElevatedButton.icon(
             icon: const Icon(Icons.add),
             onPressed: () {
-              if (_formKey.currentState!.validate()) {}
+              if (_formKey.currentState!.validate()) {
+                ScaffoldMessenger.of(context).showMaterialBanner(
+                  MaterialBanner(
+                    leading: const Icon(Icons.check_circle_outline),
+                    backgroundColor: Colors.greenAccent,
+                    content: const Text(
+                        "App added successfully. You'll get an email when it's ready"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context)
+                              .hideCurrentMaterialBanner();
+                        },
+                        child: const Text("OK"),
+                      )
+                    ],
+                  ),
+                );
+              }
             },
             label: const Text("Add App"),
           ),

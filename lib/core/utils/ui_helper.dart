@@ -33,6 +33,7 @@ void showSnackBar(
   if (context == null) return;
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         icon ?? const SizedBox.shrink(),
         if (icon != null) horizontalSpaceRegular,
