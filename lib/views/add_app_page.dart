@@ -80,6 +80,8 @@ class _AddAppFormState extends State<AddAppForm> {
   final _bundleIdController = TextEditingController();
   final _colorController = TextEditingController();
   final _websiteUrlController = TextEditingController();
+  final _toEmailController =
+      TextEditingController(text: "admin@awabuilder.com");
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +148,7 @@ class _AddAppFormState extends State<AddAppForm> {
               }
               // Check that the value is a valid website URL
               if (!RegExp(
-                      r'^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$')
+                      r'^(https?:\/\/){1}([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$')
                   .hasMatch(value)) {
                 return 'Invalid website URL';
               }
@@ -155,6 +157,15 @@ class _AddAppFormState extends State<AddAppForm> {
             decoration: const InputDecoration(
               labelText: "Website URL",
               hintText: "Ex: https://betpredictions.app/user_abc",
+            ),
+          ),
+          verticalSpaceRegular,
+          TextFormField(
+            controller: _toEmailController,
+            validator: AppUtils.emailValidate,
+            decoration: const InputDecoration(
+              labelText: "Email address to send",
+              hintText: "admin@betpredictions.com",
             ),
           ),
           verticalSpaceMedium,
