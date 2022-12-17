@@ -39,15 +39,15 @@ class SideBar extends StatelessWidget {
                     SidebarMenuItem.addApp;
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              selected: selectedMenu == SidebarMenuItem.settings,
-              title: const Text('Settings'),
-              onTap: () {
-                ref.read(selectedMenuProvider.notifier).state =
-                    SidebarMenuItem.settings;
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.settings),
+            //   selected: selectedMenu == SidebarMenuItem.settings,
+            //   title: const Text('Settings'),
+            //   onTap: () {
+            //     ref.read(selectedMenuProvider.notifier).state =
+            //         SidebarMenuItem.settings;
+            //   },
+            // ),
             const Spacer(),
             ListTile(
               leading: const Icon(Icons.logout),
