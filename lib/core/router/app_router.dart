@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:automation_wrapper_builder/views/dashboard_page.dart';
 import 'package:automation_wrapper_builder/views/login_page.dart';
 import 'package:flutter/material.dart';
 
@@ -50,6 +51,12 @@ class AppRouter {
       case AppRoutes.loginPage:
         return MaterialPageRoute<dynamic>(
           builder: (_) => const LoginPage(),
+          settings: settings,
+          fullscreenDialog: false,
+        );
+      case AppRoutes.dashboardPage:
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => const DashboardPage(),
           settings: settings,
           fullscreenDialog: false,
         );

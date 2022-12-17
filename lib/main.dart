@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Automation Wrapper App Builder',
       theme: AppTheme.lightTheme,
       onGenerateRoute: AppRouter.onGenerateRoute,
