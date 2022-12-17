@@ -11,8 +11,8 @@ class InfoContainerRow extends StatelessWidget {
     return Row(
       children: const [
         InfoContainer(contentType: "Total Variants", value: "22"),
-        horizontalSpaceRegular,
-        InfoContainer(contentType: "Total Variants", value: "22"),
+        // horizontalSpaceRegular,
+        // InfoContainer(contentType: "Total Variants", value: "22"),
       ],
     );
   }
