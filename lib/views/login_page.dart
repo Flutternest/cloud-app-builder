@@ -1,3 +1,4 @@
+import 'package:automation_wrapper_builder/core/constants/app_paths.dart';
 import 'package:automation_wrapper_builder/core/router/app_router.dart';
 import 'package:automation_wrapper_builder/core/utils/app_utils.dart';
 import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
@@ -38,15 +39,8 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "Welcome back",
-                    style: textTheme(context).headlineMedium!.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                  verticalSpaceSmall,
+                  Image.asset(AppPaths.logo),
+                  verticalSpaceLarge,
                   Text(
                     "Please login to continue",
                     style: textTheme(context).bodyLarge,

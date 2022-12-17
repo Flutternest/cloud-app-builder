@@ -1,3 +1,4 @@
+import 'package:automation_wrapper_builder/core/constants/app_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,9 +18,13 @@ class SideBar extends StatelessWidget {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: theme(context).colorScheme.primary,
+                color: theme(context).colorScheme.inversePrimary,
               ),
-              child: const Center(child: Text('Logo')),
+              child: Center(
+                  child: Image.asset(
+                AppPaths.logo,
+                width: 200,
+              )),
             ),
             ListTile(
               leading: const Icon(Icons.dashboard),
