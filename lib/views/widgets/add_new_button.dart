@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../controllers/selected_menu_controller.dart';
 import '../../core/utils/ui_helper.dart';
 import '../../core/widgets/hover_builder.dart';
 
-class AddNewButton extends StatelessWidget {
+class AddNewButton extends ConsumerWidget {
   const AddNewButton({
     Key? key,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return HoverEffect(
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          ref.read(selectedMenuProvider.notifier).state =
+              SidebarMenuItem.addApp;
+        },
         child: Container(
           width: MediaQuery.of(context).size.width / 10,
           height: MediaQuery.of(context).size.width / 10,
-          // padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: theme(context).colorScheme.inversePrimary,
             borderRadius: BorderRadius.circular(8),

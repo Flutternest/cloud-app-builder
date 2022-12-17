@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../controllers/selected_menu_controller.dart';
+import '../../core/router/app_router.dart';
 import '../../core/utils/ui_helper.dart';
 
 class SideBar extends StatelessWidget {
@@ -59,7 +60,9 @@ class SideBar extends StatelessWidget {
               iconColor: Colors.red,
               textColor: Colors.red,
               title: const Text('Logout'),
-              onTap: () {},
+              onTap: () {
+                AppRouter.navigateAndRemoveUntil(AppRoutes.loginPage);
+              },
             ),
           ],
         ),
