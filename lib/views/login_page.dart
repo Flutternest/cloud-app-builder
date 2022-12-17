@@ -1,3 +1,4 @@
+import 'package:automation_wrapper_builder/core/router/app_router.dart';
 import 'package:automation_wrapper_builder/core/utils/app_utils.dart';
 import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
 import 'package:automation_wrapper_builder/core/widgets/app_padding.dart';
@@ -70,7 +71,9 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton.icon(
                     icon: const Icon(Icons.login),
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {}
+                      // if (_formKey.currentState!.validate()) {
+                      AppRouter.navigateToPage(AppRoutes.menuPage);
+                      // }
                     },
                     label: const Text('Sign In'),
                   ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:image_picker/image_picker.dart';
+
 class AppUtils {
   static bool emailValidation(String value) {
     final validEmail = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
@@ -183,4 +185,12 @@ class AppUtils {
   }
 
   static String _pad2(int i) => i.toString().padLeft(2, '0');
+
+  ///Picks from gallery and returns the image path
+  static Future<String?> getFromGallery(
+      {ImageSource source = ImageSource.gallery}) async {
+    XFile? pickedFile =
+        await ImagePicker().pickImage(source: source, imageQuality: 25);
+    return pickedFile?.path;
+  }
 }

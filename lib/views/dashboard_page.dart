@@ -2,61 +2,35 @@ import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
 import 'package:automation_wrapper_builder/core/widgets/app_padding.dart';
 import 'package:automation_wrapper_builder/core/widgets/hover_builder.dart';
 import 'package:flutter/material.dart';
-import 'package:responsive_builder/responsive_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../controllers/selected_menu_controller.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ResponsiveBuilder(
-        builder: (context, sizeInfo) {
-          return Row(
-            children: [
-              const Expanded(flex: 2, child: SideBar()),
-              Expanded(
-                flex: 8,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Container(
-                    //   height: 50,
-                    //   width: double.infinity,
-                    //   color: theme(context).colorScheme.inversePrimary,
-                    //   // color: Colors.grey,
-                    // ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: DefaultAppPadding(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                children: const [
-                                  Expanded(child: InfoContainerRow()),
-                                  AddNewButton(),
-                                ],
-                              ),
-                              verticalSpaceMedium,
-                              Text(
-                                "Build History",
-                                style:
-                                    textTheme(context).titleSmall!.copyWith(),
-                              ),
-                              verticalSpaceRegular,
-                              const BuildHistoryTable(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
+    return SingleChildScrollView(
+      child: DefaultAppPadding(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: const [
+                Expanded(child: InfoContainerRow()),
+                AddNewButton(),
+              ],
+            ),
+            verticalSpaceMedium,
+            Text(
+              "Build History",
+              style: textTheme(context).titleSmall!.copyWith(),
+            ),
+            verticalSpaceRegular,
+            const BuildHistoryTable(),
+          ],
+        ),
       ),
     );
   }
@@ -118,38 +92,57 @@ class SideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: Column(
-        // padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: theme(context).colorScheme.primary,
+    return Consumer(builder: (context, ref, child) {
+      final selectedMenu = ref.watch(selectedMenuProvider);
+      return Drawer(
+        child: Column(
+          // padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: theme(context).colorScheme.primary,
+              ),
+              child: const Center(child: Text('Logo')),
             ),
-            child: const Center(child: Text('Logo')),
-          ),
-          ListTile(
-            leading: const Icon(Icons.dashboard),
-            selected: true,
-            title: const Text('Dashboard'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () {},
-          ),
-          const Spacer(),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            iconColor: Colors.red,
-            textColor: Colors.red,
-            title: const Text('Logout'),
-            onTap: () {},
-          ),
-        ],
-      ),
-    );
+            ListTile(
+              leading: const Icon(Icons.dashboard),
+              selected: selectedMenu == SidebarMenuItem.dashboard,
+              title: const Text('Dashboard'),
+              onTap: () {
+                ref.read(selectedMenuProvider.notifier).state =
+                    SidebarMenuItem.dashboard;
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.add),
+              selected: selectedMenu == SidebarMenuItem.addApp,
+              title: const Text('Add App'),
+              onTap: () {
+                ref.read(selectedMenuProvider.notifier).state =
+                    SidebarMenuItem.addApp;
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              selected: selectedMenu == SidebarMenuItem.settings,
+              title: const Text('Settings'),
+              onTap: () {
+                ref.read(selectedMenuProvider.notifier).state =
+                    SidebarMenuItem.settings;
+              },
+            ),
+            const Spacer(),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              iconColor: Colors.red,
+              textColor: Colors.red,
+              title: const Text('Logout'),
+              onTap: () {},
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 
