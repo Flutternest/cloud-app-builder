@@ -65,9 +65,9 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton.icon(
                     icon: const Icon(Icons.login),
                     onPressed: () {
-                      // if (_formKey.currentState!.validate()) {
-                      AppRouter.navigateToPage(AppRoutes.menuPage);
-                      // }
+                      if (_formKey.currentState!.validate()) {
+                        AppRouter.navigateToPage(AppRoutes.menuPage);
+                      }
                     },
                     label: const Text('Sign In'),
                   ),
