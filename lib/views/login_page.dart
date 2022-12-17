@@ -18,6 +18,8 @@ class _LoginPageState extends State<LoginPage> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
 
+  bool isPasswordVisible = false;
+
   @override
   void dispose() {
     _emailCtrl.dispose();
@@ -58,15 +60,39 @@ class _LoginPageState extends State<LoginPage> {
                   TextFormField(
                     controller: _passCtrl,
                     validator: AppUtils.passwordValidate,
-                    decoration: const InputDecoration(labelText: 'Password'),
-                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          isPasswordVisible
+                              ? Icons.visibility_off
+                              : Icons.remove_red_eye,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isPasswordVisible = !isPasswordVisible;
+                          });
+                        },
+                      ),
+                    ),
+                    obscureText: isPasswordVisible,
                   ),
                   verticalSpaceRegular,
                   ElevatedButton.icon(
                     icon: const Icon(Icons.login),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        AppRouter.navigateToPage(AppRoutes.menuPage);
+                        if (_emailCtrl.text.trim() == 'admin@awabuilder.com' &&
+                            _passCtrl.text.trim() == 'admin123') {
+                          AppRouter.navigateToPage(AppRoutes.menuPage);
+                        } else {
+                          showSnackBar(context,
+                              message:
+                                  'Invalid credentials. Please check your email and password.',
+                              icon:
+                                  const Icon(Icons.error, color: Colors.white),
+                              color: Colors.red);
+                        }
                       }
                     },
                     label: const Text('Sign In'),
