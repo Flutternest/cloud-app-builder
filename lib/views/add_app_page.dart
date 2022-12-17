@@ -15,7 +15,7 @@ class AddAppPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              "Add App",
+              "Create App",
               style: textTheme(context).titleLarge!.copyWith(),
             ),
             verticalSpaceRegular,
@@ -181,7 +181,7 @@ class _AddAppFormState extends State<AddAppForm> {
                 );
               }
             },
-            label: const Text("Add App"),
+            label: const Text("Create App"),
           ),
         ],
       ),

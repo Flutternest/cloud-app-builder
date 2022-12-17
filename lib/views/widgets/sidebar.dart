@@ -39,7 +39,7 @@ class SideBar extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.add),
               selected: selectedMenu == SidebarMenuItem.addApp,
-              title: const Text('Add App'),
+              title: const Text('Create App'),
               onTap: () {
                 ref.read(selectedMenuProvider.notifier).state =
                     SidebarMenuItem.addApp;
