@@ -1,5 +1,6 @@
 import 'package:automation_wrapper_builder/views/add_app_page.dart';
 import 'package:automation_wrapper_builder/views/dashboard_page.dart';
+import 'package:automation_wrapper_builder/views/widgets/sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_builder/responsive_builder.dart';
