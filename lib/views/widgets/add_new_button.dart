@@ -33,10 +33,12 @@ class AddNewButton extends ConsumerWidget {
                   color: theme(context).colorScheme.primary,
                   padding: const EdgeInsets.all(8),
                   child: Center(
-                    child: Icon(
-                      Icons.add_circle,
-                      size: 50,
-                      color: theme(context).colorScheme.inversePrimary,
+                    child: FittedBox(
+                      child: Icon(
+                        Icons.add_circle,
+                        size: 50,
+                        color: theme(context).colorScheme.inversePrimary,
+                      ),
                     ),
                   ),
                 ),
