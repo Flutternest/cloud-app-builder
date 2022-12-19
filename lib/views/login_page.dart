@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                     ),
-                    obscureText: isPasswordVisible,
+                    obscureText: !isPasswordVisible,
                   ),
                   verticalSpaceRegular,
                   ElevatedButton.icon(
