@@ -13,6 +13,19 @@ class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Consumer(builder: (context, ref, child) {
+        if (ref.watch(selectedMenuProvider) == SidebarMenuItem.dashboard) {
+          return FloatingActionButton.extended(
+            label: const Text("Add New"),
+            onPressed: () {
+              ref.read(selectedMenuProvider.notifier).state =
+                  SidebarMenuItem.addApp;
+            },
+            icon: const Icon(Icons.add_circle),
+          );
+        }
+        return const SizedBox.shrink();
+      }),
       body: ResponsiveBuilder(
         builder: (context, sizeInfo) {
           return Row(
