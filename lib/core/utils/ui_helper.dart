@@ -14,6 +14,8 @@ const Widget verticalSpaceLarge = SizedBox(height: 50.0);
 
 ThemeData theme(context) => Theme.of(context);
 TextTheme textTheme(context) => theme(context).textTheme;
+bool isDarkTheme(context) =>
+    MediaQuery.of(context).platformBrightness == Brightness.dark;
 
 String validString(String? text, {String replacer = "N/A"}) => text != null
     ? text.isEmpty

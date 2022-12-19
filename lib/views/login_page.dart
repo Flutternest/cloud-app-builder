@@ -1,19 +1,23 @@
+import 'package:automation_wrapper_builder/controllers/core/prefs_provider.dart';
 import 'package:automation_wrapper_builder/core/constants/app_paths.dart';
 import 'package:automation_wrapper_builder/core/router/app_router.dart';
 import 'package:automation_wrapper_builder/core/utils/app_utils.dart';
 import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
 import 'package:automation_wrapper_builder/core/widgets/app_padding.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-class LoginPage extends StatefulWidget {
+import '../controllers/core/theme_provider.dart';
+
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
@@ -29,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkTheme = ref.watch(themeBrightnessProvider) == Brightness.dark;
     return Scaffold(
       body: DefaultAppPadding(
         child: Form(
@@ -41,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(AppPaths.logo),
+                  Image.asset(isDarkTheme ? AppPaths.logoDark : AppPaths.logo),
                   verticalSpaceLarge,
                   Text(
                     "Please login to continue",
@@ -80,10 +85,11 @@ class _LoginPageState extends State<LoginPage> {
                   verticalSpaceRegular,
                   ElevatedButton.icon(
                     icon: const Icon(Icons.login),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         if (_emailCtrl.text.trim() == 'admin@awabuilder.com' &&
                             _passCtrl.text.trim() == 'admin123') {
+                          ref.read(prefsProvider).setBool("isLoggedIn", true);
                           AppRouter.navigateToPage(AppRoutes.menuPage);
                         } else {
                           showSnackBar(context,

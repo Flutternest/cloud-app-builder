@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import '../../views/add_app_page.dart';
 
 class AppRoutes {
-  static const loginPage = '/';
+  static const loginPage = '/login-page';
   static const menuPage = '/menu-page';
   static const dashboardPage = '/dashboard-page';
   static const addAppPage = '/add-app-page';

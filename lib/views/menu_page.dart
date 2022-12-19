@@ -16,6 +16,7 @@ class MenuPage extends StatelessWidget {
       body: ResponsiveBuilder(
         builder: (context, sizeInfo) {
           return Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Expanded(flex: 2, child: SideBar()),
               Consumer(builder: (context, ref, child) {

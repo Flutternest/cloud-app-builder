@@ -39,6 +39,7 @@ dependencies:
   responsive_builder: ^0.4.3
   flutter_riverpod: ^2.1.1
   image_picker: ^0.8.6
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

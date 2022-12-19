@@ -11,6 +11,10 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15)),
     ),
+    switchTheme: SwitchThemeData(
+      thumbColor: MaterialStateProperty.all(Colors.white),
+      trackColor: MaterialStateProperty.all(darkColorScheme.primary),
+    ),
     colorScheme: lightColorScheme,
   );
   static final darkTheme = ThemeData.dark().copyWith(
@@ -18,6 +22,14 @@ class AppTheme {
     inputDecorationTheme: const InputDecorationTheme(
       border: OutlineInputBorder(),
     ),
-    colorScheme: lightColorScheme,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15)),
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: MaterialStateProperty.all(Colors.white),
+      trackColor: MaterialStateProperty.all(darkColorScheme.primary),
+    ),
+    colorScheme: darkColorScheme,
   );
 }
