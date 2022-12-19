@@ -322,21 +322,19 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentMaterialBanner();
+                                  scaffoldMessenger.hideCurrentMaterialBanner();
                                 },
                                 child: const Text("OK"),
                               ),
                             ],
                           ),
                         );
-                        if (widget.isUpdate) {
-                          ref.watch(sidebarContentProvider.notifier).state =
-                              null;
-                        }
                         Future.delayed(const Duration(seconds: 5), () {
-                          ScaffoldMessenger.of(context)
-                              .hideCurrentMaterialBanner();
+                          scaffoldMessenger.hideCurrentMaterialBanner();
+                          if (widget.isUpdate) {
+                            ref.watch(sidebarContentProvider.notifier).state =
+                                null;
+                          }
 
                           ref.read(selectedMenuProvider.notifier).state =
                               SidebarMenuItem.dashboard;
