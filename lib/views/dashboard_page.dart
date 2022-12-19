@@ -2,7 +2,6 @@ import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
 import 'package:automation_wrapper_builder/core/widgets/app_padding.dart';
 import 'package:automation_wrapper_builder/views/widgets/add_new_button.dart';
 import 'package:automation_wrapper_builder/views/widgets/history_table.dart';
-import 'package:automation_wrapper_builder/views/widgets/info_container_row.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -15,11 +14,9 @@ class DashboardPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: const [
-                Expanded(child: InfoContainerRow()),
-                AddNewButton(),
-              ],
+            const Align(
+              alignment: Alignment.centerRight,
+              child: AddNewButton(),
             ),
             verticalSpaceMedium,
             Text(
