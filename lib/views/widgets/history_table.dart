@@ -39,9 +39,21 @@ class HistoryDataTableSource extends DataTableSource {
       DataCell(Text("bet.predict.$index.app")),
       DataCell(Text("https://predictions.web.app/$index.html")),
       DataCell(
-        IconButton(
-          icon: const Icon(Icons.delete),
-          onPressed: () {},
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.download),
+              iconSize: 20,
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete),
+              color: Colors.red,
+              iconSize: 20,
+              onPressed: () {},
+            ),
+          ],
         ),
       ),
     ]);
