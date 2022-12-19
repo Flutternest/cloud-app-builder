@@ -7,3 +7,7 @@ final themeBrightnessProvider = StateProvider<Brightness>((ref) {
       ? Brightness.dark
       : Brightness.light;
 });
+
+final sidebarContentProvider = StateProvider<Widget?>((ref) {
+  return null;
+});

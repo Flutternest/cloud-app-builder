@@ -1,3 +1,4 @@
+import 'package:automation_wrapper_builder/controllers/core/theme_provider.dart';
 import 'package:automation_wrapper_builder/controllers/selected_menu_controller.dart';
 import 'package:automation_wrapper_builder/core/utils/app_utils.dart';
 import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
@@ -7,8 +8,33 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/widgets/app_padding.dart';
 
+class AppPackage {
+  final String name;
+  final String bundleId;
+  final String websiteUrl;
+  final String iconUrl;
+  final String color;
+  final String versionCode;
+  final String versionNumber;
+  final String toEmail;
+
+  AppPackage({
+    required this.name,
+    required this.color,
+    required this.versionCode,
+    required this.versionNumber,
+    required this.bundleId,
+    required this.websiteUrl,
+    required this.iconUrl,
+    required this.toEmail,
+  });
+}
+
 class AddAppPage extends StatelessWidget {
-  const AddAppPage({super.key});
+  const AddAppPage({super.key, this.isUpdate = false, this.appPackage});
+
+  final bool isUpdate;
+  final AppPackage? appPackage;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +44,7 @@ class AddAppPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              "Create App",
+              isUpdate ? "Update App " : "Create App",
               style: textTheme(context).titleLarge!.copyWith(),
             ),
             verticalSpaceRegular,
@@ -64,7 +90,10 @@ class AddAppPage extends StatelessWidget {
             verticalSpaceRegular,
             const Center(child: Text("Resolution: 514x514 (1:1 aspect ratio)")),
             verticalSpaceRegular,
-            const AddAppForm(),
+            AddAppForm(
+              appPackage: appPackage,
+              isUpdate: isUpdate,
+            ),
           ],
         ),
       ),
@@ -73,7 +102,9 @@ class AddAppPage extends StatelessWidget {
 }
 
 class AddAppForm extends ConsumerStatefulWidget {
-  const AddAppForm({super.key});
+  const AddAppForm({super.key, this.appPackage, this.isUpdate = false});
+  final AppPackage? appPackage;
+  final bool isUpdate;
 
   @override
   ConsumerState<AddAppForm> createState() => _AddAppFormState();
@@ -81,21 +112,25 @@ class AddAppForm extends ConsumerStatefulWidget {
 
 class _AddAppFormState extends ConsumerState<AddAppForm> {
   final _formKey = GlobalKey<FormState>();
-  final _appNameController = TextEditingController();
-  final _bundleIdController = TextEditingController();
-  final _colorController = TextEditingController();
-  final _websiteUrlController = TextEditingController();
-  final _versionNumberController = TextEditingController();
-  final _versionController = TextEditingController();
-
-  final _toEmailController =
-      TextEditingController(text: "admin@awabuilder.com");
+  late final TextEditingController _appNameController =
+      TextEditingController(text: widget.appPackage?.name);
+  late final _bundleIdController =
+      TextEditingController(text: widget.appPackage?.bundleId);
+  late final _colorController =
+      TextEditingController(text: widget.appPackage?.color);
+  late final _websiteUrlController =
+      TextEditingController(text: widget.appPackage?.websiteUrl);
+  late final _versionNumberController =
+      TextEditingController(text: widget.appPackage?.versionNumber);
+  late final _versionController =
+      TextEditingController(text: widget.appPackage?.versionCode);
+  late final _toEmailController = TextEditingController(
+      text: widget.appPackage?.toEmail ?? "admin@awabuilder.com");
 
   bool isLoading = false;
 
   @override
   void dispose() {
-    //dispose all controllers
     _appNameController.dispose();
     _bundleIdController.dispose();
     _colorController.dispose();
@@ -251,8 +286,14 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
               icon: isLoading
                   ? const SizedBox(
                       height: 20, width: 20, child: CircularProgressIndicator())
-                  : const Icon(Icons.add),
-              label: Text(isLoading ? "Creating..." : "Create App"),
+                  : Icon(widget.isUpdate ? Icons.update : Icons.add),
+              label: Text(isLoading
+                  ? widget.isUpdate
+                      ? "Updating..."
+                      : "Creating..."
+                  : widget.isUpdate
+                      ? "Update App"
+                      : "Create App"),
               onPressed: isLoading
                   ? null
                   : () async {
@@ -275,9 +316,9 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                         scaffoldMessenger.showMaterialBanner(
                           MaterialBanner(
                             leading: const Icon(Icons.check_circle_outline),
-                            backgroundColor: Colors.greenAccent,
-                            content: const Text(
-                                "App added successfully. You'll get an email when it's ready. Redirecting to Dashboard..."),
+                            backgroundColor: Colors.green,
+                            content: Text(
+                                "App ${widget.isUpdate ? "updated" : "added"} successfully. You'll get an email when it's ready. ${!widget.isUpdate ? 'Redirecting to Dashboard...' : ""}"),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -289,9 +330,14 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                             ],
                           ),
                         );
+                        if (widget.isUpdate) {
+                          ref.watch(sidebarContentProvider.notifier).state =
+                              null;
+                        }
                         Future.delayed(const Duration(seconds: 5), () {
                           ScaffoldMessenger.of(context)
                               .hideCurrentMaterialBanner();
+
                           ref.read(selectedMenuProvider.notifier).state =
                               SidebarMenuItem.dashboard;
                         });

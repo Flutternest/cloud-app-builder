@@ -1,10 +1,14 @@
+import 'package:automation_wrapper_builder/views/add_app_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HistoryTable extends StatelessWidget {
+import '../../controllers/core/theme_provider.dart';
+
+class HistoryTable extends ConsumerWidget {
   const HistoryTable({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return PaginatedDataTable(
       header: const Text("Build History"),
       // onRowsPerPageChanged: (perPage) {},
@@ -37,12 +41,40 @@ class HistoryTable extends StatelessWidget {
           label: Text('Actions'),
         ),
       ],
-      source: HistoryDataTableSource(),
+      source: HistoryDataTableSource(
+        onEditTap: () {
+          ref.watch(sidebarContentProvider.notifier).state = AddAppPage(
+            isUpdate: true,
+            appPackage: AppPackage(
+              bundleId: "bet.predict.1.app",
+              color: "000000",
+              iconUrl: "https://www.facebook.com/images/fb_icon_325x325.png",
+              name: "Bet Predictions 1",
+              versionCode: "1.0.0",
+              versionNumber: "12",
+              websiteUrl: "https://predictions.web.app/1.html",
+              toEmail: "admin@awabuilder.com",
+            ),
+          );
+        },
+        onDeleteTap: () {},
+        onDownloadTap: () {},
+      ),
     );
   }
 }
 
 class HistoryDataTableSource extends DataTableSource {
+  final VoidCallback onEditTap;
+  final VoidCallback onDownloadTap;
+  final VoidCallback onDeleteTap;
+
+  HistoryDataTableSource({
+    required this.onEditTap,
+    required this.onDownloadTap,
+    required this.onDeleteTap,
+  });
+
   @override
   DataRow? getRow(int index) {
     return DataRow.byIndex(
@@ -62,18 +94,18 @@ class HistoryDataTableSource extends DataTableSource {
               IconButton(
                 icon: const Icon(Icons.edit),
                 iconSize: 20,
-                onPressed: () {},
+                onPressed: onEditTap,
               ),
               IconButton(
                 icon: const Icon(Icons.download),
                 iconSize: 20,
-                onPressed: () {},
+                onPressed: onEditTap,
               ),
               IconButton(
                 icon: const Icon(Icons.delete),
                 color: Colors.red,
                 iconSize: 20,
-                onPressed: () {},
+                onPressed: onDeleteTap,
               ),
             ],
           ),
