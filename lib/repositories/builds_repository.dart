@@ -21,7 +21,7 @@ class BuildsRepository {
 
   String get path => Configs.apiBaseUrl;
 
-  /// Get all builds
+  /// Add a new build
   ///
   /// [recordId] - The record id of the build (if update, else leave null)
   Future<void> addOrUpdatedNewBuild({

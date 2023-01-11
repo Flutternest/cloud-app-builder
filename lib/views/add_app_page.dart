@@ -2,6 +2,8 @@ import 'package:automation_wrapper_builder/controllers/core/theme_provider.dart'
 import 'package:automation_wrapper_builder/controllers/selected_menu_controller.dart';
 import 'package:automation_wrapper_builder/core/utils/app_utils.dart';
 import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
+import 'package:automation_wrapper_builder/exceptions/http_exception.dart';
+import 'package:automation_wrapper_builder/repositories/builds_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -301,9 +303,13 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                         final scaffoldMessenger = ScaffoldMessenger.of(context);
 
                         setState(() => isLoading = true);
-                        await Future.delayed(const Duration(seconds: 1))
-                            .then((value) {
-                          setState(() => isLoading = false);
+
+                        try {
+                          await ref
+                              .read(buildsRepositoryProvider)
+                              .addOrUpdatedNewBuild(
+                                recordId: widget.isUpdate ? "" : null,
+                              );
 
                           _appNameController.clear();
                           _bundleIdController.clear();
@@ -311,34 +317,58 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                           _websiteUrlController.clear();
                           _versionController.clear();
                           _versionNumberController.clear();
-                        });
 
-                        scaffoldMessenger.showMaterialBanner(
-                          MaterialBanner(
-                            leading: const Icon(Icons.check_circle_outline),
-                            backgroundColor: Colors.green,
-                            content: Text(
-                                "App ${widget.isUpdate ? "updated" : "added"} successfully. You'll get an email when it's ready. ${!widget.isUpdate ? 'Redirecting to Dashboard...' : ""}"),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  scaffoldMessenger.hideCurrentMaterialBanner();
-                                },
-                                child: const Text("OK"),
-                              ),
-                            ],
-                          ),
-                        );
-                        Future.delayed(const Duration(seconds: 5), () {
-                          scaffoldMessenger.hideCurrentMaterialBanner();
-                          if (widget.isUpdate) {
-                            ref.watch(sidebarContentProvider.notifier).state =
-                                null;
-                          }
+                          scaffoldMessenger.showMaterialBanner(
+                            MaterialBanner(
+                              leading: const Icon(Icons.check_circle_outline),
+                              backgroundColor: Colors.green,
+                              content: Text(
+                                  "App ${widget.isUpdate ? "updated" : "added"} successfully. You'll get an email when it's ready. ${!widget.isUpdate ? 'Redirecting to Dashboard...' : ""}"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    scaffoldMessenger
+                                        .hideCurrentMaterialBanner();
+                                  },
+                                  child: const Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                          Future.delayed(const Duration(seconds: 5), () {
+                            scaffoldMessenger.hideCurrentMaterialBanner();
+                            if (widget.isUpdate) {
+                              ref.watch(sidebarContentProvider.notifier).state =
+                                  null;
+                            }
 
-                          ref.read(selectedMenuProvider.notifier).state =
-                              SidebarMenuItem.dashboard;
-                        });
+                            ref.read(selectedMenuProvider.notifier).state =
+                                SidebarMenuItem.dashboard;
+                          });
+                        } on HttpException catch (e) {
+                          debugPrint(
+                              "Error (addOrUpdatedNewBuild | type: ${widget.isUpdate ? "update" : "new"}): ${e.message}");
+
+                          scaffoldMessenger.showMaterialBanner(
+                            MaterialBanner(
+                              leading: const Icon(Icons.check_circle_outline),
+                              backgroundColor: Colors.green,
+                              content: Text(
+                                  "App ${widget.isUpdate ? "updated" : "added"} successfully. You'll get an email when it's ready. ${!widget.isUpdate ? 'Redirecting to Dashboard...' : ""}"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    scaffoldMessenger
+                                        .hideCurrentMaterialBanner();
+                                  },
+                                  child: const Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        } finally {
+                          setState(() => isLoading = false);
+                        }
                       }
                     },
             ),
