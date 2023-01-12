@@ -62,8 +62,11 @@ class _AddAppPageState extends State<AddAppPage> {
                     ),
                     child: iconPath != null
                         ? Image.file(File(iconPath!))
-                        : Image.network(
-                            "https://www.facebook.com/images/fb_icon_325x325.png"),
+                        : widget.buildItem?.iconUrl != null &&
+                                widget.buildItem!.iconUrl!.isNotEmpty
+                            ? Image.network(widget.buildItem!.iconUrl!)
+                            : Image.network(
+                                "https://firebasestorage.googleapis.com/v0/b/awa-builder.appspot.com/o/uploads%2Fglobal%2Fic_launcher.png?alt=media&token=3a5a6b8c-7a0a-46e1-8222-823c66544491"),
                   ),
                   Positioned(
                     right: -5,
