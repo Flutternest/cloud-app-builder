@@ -30,7 +30,7 @@ class DashboardPage extends ConsumerWidget {
         ),
         if (sidePanel != null)
           Expanded(
-              flex: 4,
+              flex: 6,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

@@ -4,6 +4,7 @@ import 'package:automation_wrapper_builder/controllers/core/theme_provider.dart'
 import 'package:automation_wrapper_builder/controllers/selected_menu_controller.dart';
 import 'package:automation_wrapper_builder/core/utils/app_utils.dart';
 import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
+import 'package:automation_wrapper_builder/data/models/build_item.dart';
 import 'package:automation_wrapper_builder/exceptions/http_exception.dart';
 import 'package:automation_wrapper_builder/repositories/builds_repository.dart';
 import 'package:dio/dio.dart';
@@ -13,33 +14,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/widgets/app_padding.dart';
 
-class AppPackage {
-  final String name;
-  final String bundleId;
-  final String websiteUrl;
-  final String iconUrl;
-  final String color;
-  final String versionCode;
-  final String versionNumber;
-  final String toEmail;
-
-  AppPackage({
-    required this.name,
-    required this.color,
-    required this.versionCode,
-    required this.versionNumber,
-    required this.bundleId,
-    required this.websiteUrl,
-    required this.iconUrl,
-    required this.toEmail,
-  });
-}
-
 class AddAppPage extends StatefulWidget {
-  const AddAppPage({super.key, this.isUpdate = false, this.appPackage});
+  const AddAppPage({super.key, this.isUpdate = false, this.buildItem});
 
   final bool isUpdate;
-  final AppPackage? appPackage;
+  final BuildItem? buildItem;
 
   @override
   State<AddAppPage> createState() => _AddAppPageState();
@@ -115,7 +94,7 @@ class _AddAppPageState extends State<AddAppPage> {
             const Center(child: Text("Resolution: 514x514 (1:1 aspect ratio)")),
             verticalSpaceRegular,
             AddAppForm(
-              appPackage: widget.appPackage,
+              appPackage: widget.buildItem,
               isUpdate: widget.isUpdate,
               iconPath: iconPath,
             ),
@@ -135,7 +114,7 @@ class AddAppForm extends ConsumerStatefulWidget {
     this.keystorePath,
   });
 
-  final AppPackage? appPackage;
+  final BuildItem? appPackage;
   final bool isUpdate;
   final String? iconPath;
   final String? keystorePath;
@@ -147,19 +126,19 @@ class AddAppForm extends ConsumerStatefulWidget {
 class _AddAppFormState extends ConsumerState<AddAppForm> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _appNameController =
-      TextEditingController(text: widget.appPackage?.name);
+      TextEditingController(text: widget.appPackage?.applicationName);
   late final _bundleIdController =
       TextEditingController(text: widget.appPackage?.bundleId);
   late final _colorController =
-      TextEditingController(text: widget.appPackage?.color);
+      TextEditingController(text: widget.appPackage?.primaryColor);
   late final _websiteUrlController =
       TextEditingController(text: widget.appPackage?.websiteUrl);
   late final _versionNumberController =
       TextEditingController(text: widget.appPackage?.versionNumber);
   late final _versionController =
-      TextEditingController(text: widget.appPackage?.versionCode);
-  late final _toEmailController = TextEditingController(
-      text: widget.appPackage?.toEmail ?? "admin@awabuilder.com");
+      TextEditingController(text: widget.appPackage?.version);
+  late final _toEmailController =
+      TextEditingController(text: "admin@awabuilder.com");
 
   bool isLoading = false;
 
@@ -323,10 +302,11 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                      "Upload keystore file ${widget.isUpdate ? "(leave blank to use original)" : "(if available)"}"),
+                  Expanded(
+                    child: Text(
+                        "Upload keystore file ${widget.isUpdate ? "(leave blank to use original)" : "(if available)"}"),
+                  ),
                   TextButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.upload),
@@ -417,11 +397,6 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                           );
                           Future.delayed(const Duration(seconds: 5), () {
                             scaffoldMessenger.hideCurrentMaterialBanner();
-                            if (widget.isUpdate) {
-                              ref.watch(sidebarContentProvider.notifier).state =
-                                  null;
-                            }
-
                             ref.read(selectedMenuProvider.notifier).state =
                                 SidebarMenuItem.dashboard;
                           });

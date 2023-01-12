@@ -1,3 +1,5 @@
+import 'package:automation_wrapper_builder/controllers/core/theme_provider.dart';
+import 'package:automation_wrapper_builder/core/router/app_router.dart';
 import 'package:automation_wrapper_builder/data/models/build_item.dart';
 import 'package:automation_wrapper_builder/extensions/string_extension.dart';
 import 'package:automation_wrapper_builder/views/add_app_page.dart';
@@ -5,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../controllers/core/theme_provider.dart';
 import '../../controllers/history_list_controller.dart';
 
 class HistoryTable extends ConsumerWidget {
@@ -52,24 +53,14 @@ class HistoryTable extends ConsumerWidget {
           ],
           source: HistoryDataTableSource(
             finalList: history,
-            onEditTap: () {
+            onEditTap: (buildItem) {
               ref.watch(sidebarContentProvider.notifier).state = AddAppPage(
+                buildItem: buildItem,
                 isUpdate: true,
-                appPackage: AppPackage(
-                  bundleId: "bet.predict.1.app",
-                  color: "000000",
-                  iconUrl:
-                      "https://www.facebook.com/images/fb_icon_325x325.png",
-                  name: "Bet Predictions 1",
-                  versionCode: "1.0.0",
-                  versionNumber: "12",
-                  websiteUrl: "https://predictions.web.app/1.html",
-                  toEmail: "admin@awabuilder.com",
-                ),
               );
             },
-            onDeleteTap: () {},
-            onDownloadTap: () {},
+            onDeleteTap: (buildItem) {},
+            onDownloadTap: (buildItem) {},
           ),
         );
       },
@@ -83,11 +74,13 @@ class HistoryTable extends ConsumerWidget {
   }
 }
 
+typedef BuildItemCallback = void Function(BuildItem buildItem);
+
 class HistoryDataTableSource extends DataTableSource {
   final List<BuildItem> finalList;
-  final VoidCallback onEditTap;
-  final VoidCallback onDownloadTap;
-  final VoidCallback onDeleteTap;
+  final BuildItemCallback onEditTap;
+  final BuildItemCallback onDownloadTap;
+  final BuildItemCallback onDeleteTap;
 
   HistoryDataTableSource({
     required this.finalList,
@@ -116,18 +109,18 @@ class HistoryDataTableSource extends DataTableSource {
               IconButton(
                 icon: const Icon(Icons.edit),
                 iconSize: 20,
-                onPressed: onEditTap,
+                onPressed: () => onEditTap.call(item),
               ),
               IconButton(
                 icon: const Icon(Icons.download),
                 iconSize: 20,
-                onPressed: onEditTap,
+                onPressed: () => onDownloadTap.call(item),
               ),
               IconButton(
                 icon: const Icon(Icons.delete),
                 color: Colors.red,
                 iconSize: 20,
-                onPressed: onDeleteTap,
+                onPressed: () => onDeleteTap.call(item),
               ),
             ],
           ),
