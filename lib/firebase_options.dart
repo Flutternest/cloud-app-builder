@@ -65,7 +65,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '787757052851',
     projectId: 'awa-builder',
     storageBucket: 'awa-builder.appspot.com',
-    iosClientId: '787757052851-qd30soo7tiqlu17r0ddcvpm5kba7sg8e.apps.googleusercontent.com',
+    iosClientId:
+        '787757052851-qd30soo7tiqlu17r0ddcvpm5kba7sg8e.apps.googleusercontent.com',
     iosBundleId: 'com.example.automationWrapperBuilder',
   );
 }
