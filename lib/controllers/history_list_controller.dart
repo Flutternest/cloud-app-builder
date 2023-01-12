@@ -6,6 +6,7 @@ final historyListProvider = StreamProvider<Iterable<BuildItem>>((ref) async* {
   final snapshots = ref
       .watch(firestoreProvider)
       .collection("history")
+      .orderBy("updated_at", descending: true)
       .snapshots()
       .asBroadcastStream()
       .map(
