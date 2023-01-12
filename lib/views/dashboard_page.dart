@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
 import 'package:automation_wrapper_builder/core/widgets/app_padding.dart';
 import 'package:automation_wrapper_builder/views/widgets/history_table.dart';
@@ -13,35 +15,57 @@ class DashboardPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final sidePanel = ref.watch(sidebarContentProvider);
 
-    return Row(
+    return Stack(
       children: [
-        Expanded(
-          flex: 8,
-          child: SingleChildScrollView(
-            child: DefaultAppPadding(
-              child: Column(
-                children: const [
-                  HistoryTable(),
-                  verticalSpaceLarge,
-                ],
-              ),
+        SingleChildScrollView(
+          child: DefaultAppPadding(
+            child: Column(
+              children: const [
+                HistoryTable(),
+                verticalSpaceLarge,
+              ],
             ),
           ),
         ),
-        if (sidePanel != null)
-          Expanded(
-              flex: 6,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  IconButton(
-                      onPressed: () => ref
-                          .watch(sidebarContentProvider.notifier)
-                          .state = null,
-                      icon: const Icon(Icons.close)),
-                  sidePanel,
-                ],
-              )),
+        if (sidePanel != null) ...[
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            clipBehavior: Clip.antiAlias,
+            decoration: const BoxDecoration(),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+              child: Container(color: Colors.black45),
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.4,
+              decoration: const BoxDecoration(boxShadow: [
+                BoxShadow(
+                  offset: Offset(-5, -5),
+                  color: Colors.black12,
+                  spreadRadius: 3,
+                  blurRadius: 5,
+                )
+              ]),
+              child: Scaffold(
+                body: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        onPressed: () => ref
+                            .watch(sidebarContentProvider.notifier)
+                            .state = null,
+                        icon: const Icon(Icons.close)),
+                    sidePanel,
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }
