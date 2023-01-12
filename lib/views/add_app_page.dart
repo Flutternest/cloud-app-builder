@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:automation_wrapper_builder/controllers/core/theme_provider.dart';
 import 'package:automation_wrapper_builder/controllers/selected_menu_controller.dart';
 import 'package:automation_wrapper_builder/core/utils/app_utils.dart';
 import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
 import 'package:automation_wrapper_builder/exceptions/http_exception.dart';
 import 'package:automation_wrapper_builder/repositories/builds_repository.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,11 +35,29 @@ class AppPackage {
   });
 }
 
-class AddAppPage extends StatelessWidget {
+class AddAppPage extends StatefulWidget {
   const AddAppPage({super.key, this.isUpdate = false, this.appPackage});
 
   final bool isUpdate;
   final AppPackage? appPackage;
+
+  @override
+  State<AddAppPage> createState() => _AddAppPageState();
+}
+
+class _AddAppPageState extends State<AddAppPage> {
+  String? iconPath;
+  String? keystorePath;
+
+  void setIconPath(String? newPath) {
+    iconPath = newPath;
+    setState(() {});
+  }
+
+  void setKeystorePath(String? newPath) {
+    keystorePath = newPath;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +67,7 @@ class AddAppPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              isUpdate ? "Update App " : "Create App",
+              widget.isUpdate ? "Update App " : "Create App",
               style: textTheme(context).titleLarge!.copyWith(),
             ),
             verticalSpaceRegular,
@@ -60,9 +81,10 @@ class AddAppPage extends StatelessWidget {
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                     ),
-                    child: Image.network(
-                      "https://www.facebook.com/images/fb_icon_325x325.png",
-                    ),
+                    child: iconPath != null
+                        ? Image.file(File(iconPath!))
+                        : Image.network(
+                            "https://www.facebook.com/images/fb_icon_325x325.png"),
                   ),
                   Positioned(
                     right: -5,
@@ -76,7 +98,7 @@ class AddAppPage extends StatelessWidget {
                       ),
                       child: IconButton(
                         onPressed: () async {
-                          final pickedPath = await AppUtils.getFromGallery();
+                          iconPath = await AppUtils.getFromGallery();
                         },
                         icon: const Icon(
                           Icons.edit,
@@ -93,8 +115,9 @@ class AddAppPage extends StatelessWidget {
             const Center(child: Text("Resolution: 514x514 (1:1 aspect ratio)")),
             verticalSpaceRegular,
             AddAppForm(
-              appPackage: appPackage,
-              isUpdate: isUpdate,
+              appPackage: widget.appPackage,
+              isUpdate: widget.isUpdate,
+              iconPath: iconPath,
             ),
           ],
         ),
@@ -104,9 +127,18 @@ class AddAppPage extends StatelessWidget {
 }
 
 class AddAppForm extends ConsumerStatefulWidget {
-  const AddAppForm({super.key, this.appPackage, this.isUpdate = false});
+  const AddAppForm({
+    super.key,
+    this.appPackage,
+    this.isUpdate = false,
+    this.iconPath,
+    this.keystorePath,
+  });
+
   final AppPackage? appPackage;
   final bool isUpdate;
+  final String? iconPath;
+  final String? keystorePath;
 
   @override
   ConsumerState<AddAppForm> createState() => _AddAppFormState();
@@ -284,6 +316,25 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
               ),
             ),
             verticalSpaceMedium,
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[600]!),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                      "Upload keystore file ${widget.isUpdate ? "(leave blank to use original)" : "(if available)"}"),
+                  TextButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.upload),
+                      label: const Text("Upload (JKS file)"))
+                ],
+              ),
+            ),
+            verticalSpaceMedium,
             ElevatedButton.icon(
               icon: isLoading
                   ? const SizedBox(
@@ -305,10 +356,39 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                         setState(() => isLoading = true);
 
                         try {
+                          final rawData = {
+                            "applicationName": _appNameController.text,
+                            "bundleId": _bundleIdController.text,
+                            "websiteUrl": _websiteUrlController.text,
+                            "primaryColor": _colorController.text,
+                            "version": _versionController.text,
+                            "versionNumber": _versionNumberController.text,
+                          };
+
+                          if (widget.iconPath != null) {
+                            debugPrint(
+                                "Icon not uploaded. Asking to use default");
+                          }
+                          if (widget.keystorePath != null) {
+                            debugPrint(
+                                "Keystore not uploaded. Asking to use default");
+                          }
+
+                          final filesData = {
+                            if (widget.iconPath != null)
+                              "appIcon":
+                                  MultipartFile.fromFileSync(widget.iconPath!),
+                            if (widget.keystorePath != null)
+                              "keystore": MultipartFile.fromFileSync(
+                                  widget.keystorePath!),
+                          };
+
                           await ref
                               .read(buildsRepositoryProvider)
                               .addOrUpdatedNewBuild(
                                 recordId: widget.isUpdate ? "" : null,
+                                rawData: rawData,
+                                filesData: filesData,
                               );
 
                           _appNameController.clear();
@@ -348,24 +428,6 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                         } on HttpException catch (e) {
                           debugPrint(
                               "Error (addOrUpdatedNewBuild | type: ${widget.isUpdate ? "update" : "new"}): ${e.message}");
-
-                          scaffoldMessenger.showMaterialBanner(
-                            MaterialBanner(
-                              leading: const Icon(Icons.check_circle_outline),
-                              backgroundColor: Colors.green,
-                              content: Text(
-                                  "App ${widget.isUpdate ? "updated" : "added"} successfully. You'll get an email when it's ready. ${!widget.isUpdate ? 'Redirecting to Dashboard...' : ""}"),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    scaffoldMessenger
-                                        .hideCurrentMaterialBanner();
-                                  },
-                                  child: const Text("OK"),
-                                ),
-                              ],
-                            ),
-                          );
                         } finally {
                           setState(() => isLoading = false);
                         }

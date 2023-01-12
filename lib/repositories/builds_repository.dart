@@ -1,4 +1,6 @@
 import 'package:automation_wrapper_builder/controllers/core/prefs_provider.dart';
+import 'package:automation_wrapper_builder/data/models/build_item.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,5 +28,20 @@ class BuildsRepository {
   /// [recordId] - The record id of the build (if update, else leave null)
   Future<void> addOrUpdatedNewBuild({
     String? recordId,
-  }) async {}
+    required Map<String, dynamic> rawData,
+    required Map<String, MultipartFile> filesData,
+  }) async {
+    final finalMap = <String, dynamic>{};
+    finalMap.addAll(rawData);
+    finalMap.addAll(filesData);
+
+    if (recordId != null) {
+      finalMap.addAll({"id": recordId});
+    }
+
+    await httpService.post(
+      "$path/create/flutter/async",
+      data: FormData.fromMap(finalMap),
+    );
+  }
 }
