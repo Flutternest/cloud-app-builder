@@ -1,5 +1,6 @@
 import 'package:automation_wrapper_builder/controllers/core/theme_provider.dart';
 import 'package:automation_wrapper_builder/core/router/app_router.dart';
+import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
 import 'package:automation_wrapper_builder/data/models/build_item.dart';
 import 'package:automation_wrapper_builder/extensions/string_extension.dart';
 import 'package:automation_wrapper_builder/views/add_app_page.dart';
@@ -24,30 +25,32 @@ class HistoryTable extends ConsumerWidget {
           // onRowsPerPageChanged: (perPage) {},
           rowsPerPage: 15,
           availableRowsPerPage: const [5, 10, 15, 20, 25, 30],
-          columns: <DataColumn>[
+          columns: const <DataColumn>[
+            // DataColumn(
+            //   label: Text('Status'),
+            // ),
             DataColumn(
-              label: const Text('Name'),
-              onSort: (columnIndex, ascending) {},
+              label: Text('Name'),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text('Bundle ID'),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text('Website URL'),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text('Version Code'),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text('Version#'),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text('Created on'),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text('Updated on'),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text('Actions'),
             ),
           ],
@@ -92,10 +95,25 @@ class HistoryDataTableSource extends DataTableSource {
   @override
   DataRow? getRow(int index) {
     final item = finalList[index];
+    final inProgress = item.status == "IN_PROGRESS";
+
     return DataRow.byIndex(
       index: index,
       cells: [
-        DataCell(Text(item.applicationName.validate)),
+        DataCell(Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (inProgress) ...[
+              const SizedBox(
+                height: 15,
+                width: 15,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              horizontalSpaceRegular,
+            ],
+            Text(item.applicationName.validate),
+          ],
+        )),
         DataCell(Text(item.bundleId.validate)),
         DataCell(Text(item.websiteUrl.validate)),
         DataCell(Text(item.version.validate)),
@@ -109,18 +127,18 @@ class HistoryDataTableSource extends DataTableSource {
               IconButton(
                 icon: const Icon(Icons.edit),
                 iconSize: 20,
-                onPressed: () => onEditTap.call(item),
+                onPressed: inProgress ? null : () => onEditTap.call(item),
               ),
               IconButton(
                 icon: const Icon(Icons.download),
                 iconSize: 20,
-                onPressed: () => onDownloadTap.call(item),
+                onPressed: inProgress ? null : () => onDownloadTap.call(item),
               ),
               IconButton(
                 icon: const Icon(Icons.delete),
                 color: Colors.red,
                 iconSize: 20,
-                onPressed: () => onDeleteTap.call(item),
+                onPressed: inProgress ? null : () => onDeleteTap.call(item),
               ),
             ],
           ),
