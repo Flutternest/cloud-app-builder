@@ -7,6 +7,7 @@ import 'package:automation_wrapper_builder/views/add_app_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../controllers/history_list_controller.dart';
 
@@ -62,8 +63,38 @@ class HistoryTable extends ConsumerWidget {
                 isUpdate: true,
               );
             },
-            onDeleteTap: (buildItem) {},
-            onDownloadTap: (buildItem) {},
+            onDeleteTap: (buildItem) async {
+              if (buildItem.uid == null) return;
+              final messenger = ScaffoldMessenger.of(context);
+
+              await ref.read(historyController).deleteBuildItem(buildItem.uid!);
+
+              showSnackBarWithMessenger(
+                messenger,
+                message:
+                    "Deleted ${buildItem.applicationName} (${buildItem.bundleId}) successfully",
+                icon: const Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                ),
+              );
+            },
+            onZipDownloadTap: (buildItem) async {
+              if (buildItem.sourceUrl == null) return;
+
+              final url = Uri.parse(buildItem.sourceUrl!);
+              if (!await launchUrl(url)) {
+                throw 'Could not launch $url';
+              }
+            },
+            onApkDownloadTap: (buildItem) async {
+              if (buildItem.buildUrl == null) return;
+
+              final url = Uri.parse(buildItem.buildUrl!);
+              if (!await launchUrl(url)) {
+                throw 'Could not launch $url';
+              }
+            },
           ),
         );
       },
@@ -82,13 +113,15 @@ typedef BuildItemCallback = void Function(BuildItem buildItem);
 class HistoryDataTableSource extends DataTableSource {
   final List<BuildItem> finalList;
   final BuildItemCallback onEditTap;
-  final BuildItemCallback onDownloadTap;
+  final BuildItemCallback onZipDownloadTap;
+  final BuildItemCallback onApkDownloadTap;
   final BuildItemCallback onDeleteTap;
 
   HistoryDataTableSource({
     required this.finalList,
     required this.onEditTap,
-    required this.onDownloadTap,
+    required this.onApkDownloadTap,
+    required this.onZipDownloadTap,
     required this.onDeleteTap,
   });
 
@@ -130,9 +163,18 @@ class HistoryDataTableSource extends DataTableSource {
                 onPressed: inProgress ? null : () => onEditTap.call(item),
               ),
               IconButton(
-                icon: const Icon(Icons.download),
+                icon: const Icon(Icons.file_download),
                 iconSize: 20,
-                onPressed: inProgress ? null : () => onDownloadTap.call(item),
+                tooltip: "Download Signed APK",
+                onPressed:
+                    inProgress ? null : () => onApkDownloadTap.call(item),
+              ),
+              IconButton(
+                icon: const Icon(Icons.cloud_download_outlined),
+                iconSize: 20,
+                tooltip: "Download ZIP Source Code",
+                onPressed:
+                    inProgress ? null : () => onZipDownloadTap.call(item),
               ),
               IconButton(
                 icon: const Icon(Icons.delete),

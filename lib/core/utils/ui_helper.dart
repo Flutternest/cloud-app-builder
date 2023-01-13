@@ -44,7 +44,29 @@ void showSnackBar(
     ),
     duration: const Duration(seconds: 2),
     margin: const EdgeInsets.all(20),
-    backgroundColor: color,
+    // backgroundColor: color,
+    behavior: SnackBarBehavior.floating,
+  ));
+}
+
+void showSnackBarWithMessenger(
+  ScaffoldMessengerState messenger, {
+  String? message,
+  Color color = Colors.black87,
+  Icon? icon,
+}) {
+  messenger.showSnackBar(SnackBar(
+    content: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        icon ?? const SizedBox.shrink(),
+        if (icon != null) horizontalSpaceRegular,
+        Text(message ?? "Something went wrong"),
+      ],
+    ),
+    duration: const Duration(seconds: 2),
+    margin: const EdgeInsets.all(20),
+    // backgroundColor: color,
     behavior: SnackBarBehavior.floating,
   ));
 }

@@ -19,3 +19,17 @@ final historyListProvider = StreamProvider<Iterable<BuildItem>>((ref) async* {
     yield shot;
   }
 });
+
+final historyController = Provider<HistoryController>((ref) {
+  return HistoryController(ref);
+});
+
+class HistoryController {
+  final Ref ref;
+
+  HistoryController(this.ref);
+
+  Future<void> deleteBuildItem(String uid) {
+    return ref.watch(firestoreProvider).collection("history").doc(uid).delete();
+  }
+}

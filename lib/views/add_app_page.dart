@@ -4,13 +4,17 @@ import 'package:automation_wrapper_builder/controllers/core/theme_provider.dart'
 import 'package:automation_wrapper_builder/controllers/selected_menu_controller.dart';
 import 'package:automation_wrapper_builder/core/utils/app_utils.dart';
 import 'package:automation_wrapper_builder/core/utils/ui_helper.dart';
+import 'package:automation_wrapper_builder/core/widgets/app_image.dart';
 import 'package:automation_wrapper_builder/data/models/build_item.dart';
 import 'package:automation_wrapper_builder/exceptions/http_exception.dart';
 import 'package:automation_wrapper_builder/repositories/builds_repository.dart';
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_network/image_network.dart';
 
 import '../core/widgets/app_padding.dart';
 
@@ -25,19 +29,6 @@ class AddAppPage extends StatefulWidget {
 }
 
 class _AddAppPageState extends State<AddAppPage> {
-  String? iconPath;
-  String? keystorePath;
-
-  void setIconPath(String? newPath) {
-    iconPath = newPath;
-    setState(() {});
-  }
-
-  void setKeystorePath(String? newPath) {
-    keystorePath = newPath;
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -49,57 +40,9 @@ class _AddAppPageState extends State<AddAppPage> {
               widget.isUpdate ? "Update App " : "Create App",
               style: textTheme(context).titleLarge!.copyWith(),
             ),
-            verticalSpaceRegular,
-            Center(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: iconPath != null
-                        ? Image.file(File(iconPath!))
-                        : widget.buildItem?.iconUrl != null &&
-                                widget.buildItem!.iconUrl!.isNotEmpty
-                            ? Image.network(widget.buildItem!.iconUrl!)
-                            : Image.network(
-                                "https://firebasestorage.googleapis.com/v0/b/awa-builder.appspot.com/o/uploads%2Fglobal%2Fic_launcher.png?alt=media&token=3a5a6b8c-7a0a-46e1-8222-823c66544491"),
-                  ),
-                  Positioned(
-                    right: -5,
-                    bottom: -5,
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: theme(context).colorScheme.primary,
-                      ),
-                      child: IconButton(
-                        onPressed: () async {
-                          iconPath = await AppUtils.getFromGallery();
-                        },
-                        icon: const Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            verticalSpaceRegular,
-            const Center(child: Text("Resolution: 514x514 (1:1 aspect ratio)")),
-            verticalSpaceRegular,
             AddAppForm(
               appPackage: widget.buildItem,
               isUpdate: widget.isUpdate,
-              iconPath: iconPath,
             ),
           ],
         ),
@@ -113,14 +56,10 @@ class AddAppForm extends ConsumerStatefulWidget {
     super.key,
     this.appPackage,
     this.isUpdate = false,
-    this.iconPath,
-    this.keystorePath,
   });
 
   final BuildItem? appPackage;
   final bool isUpdate;
-  final String? iconPath;
-  final String? keystorePath;
 
   @override
   ConsumerState<AddAppForm> createState() => _AddAppFormState();
@@ -143,6 +82,21 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
   late final _toEmailController =
       TextEditingController(text: "admin@awabuilder.com");
 
+  Uint8List? iconBytes;
+  Uint8List? keystoreBytes;
+  String? uploadedKeystoreName;
+
+  void setIconBytes(Uint8List? newBytes) {
+    iconBytes = newBytes;
+    setState(() {});
+  }
+
+  void setKeystoreBytes(Uint8List? newBytes, [String? newKeystoreName]) {
+    keystoreBytes = newBytes;
+    uploadedKeystoreName = newKeystoreName;
+    setState(() {});
+  }
+
   bool isLoading = false;
 
   @override
@@ -160,11 +114,80 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
 
   @override
   Widget build(BuildContext context) {
+    Widget appIcon;
+
+    if (iconBytes != null) {
+      appIcon = Image.memory(iconBytes!);
+    } else if (widget.appPackage?.iconUrl != null &&
+        widget.appPackage!.iconUrl!.isNotEmpty) {
+      appIcon = AppImage(
+        widget.appPackage!.iconUrl!,
+        height: 100,
+        width: 100,
+      );
+    } else {
+      appIcon = const AppImage(
+        'https://firebasestorage.googleapis.com/v0/b/awa-builder.appspot.com/o/uploads%2Fglobal%2Fic_launcher.png?alt=media&token=3a5a6b8c-7a0a-46e1-8222-823c66544491',
+        height: 100,
+        width: 100,
+      );
+    }
+
     return FocusTraversalGroup(
       child: Form(
         key: _formKey,
         child: Column(
           children: [
+            verticalSpaceRegular,
+            Center(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                    ),
+                    child: appIcon,
+                  ),
+                  Positioned(
+                    right: -5,
+                    bottom: -5,
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: theme(context).colorScheme.primary,
+                      ),
+                      child: IconButton(
+                        onPressed: () async {
+                          // setIconPath(await AppUtils.getFromGallery());
+                          FilePickerResult? result =
+                              await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: ['jpg', 'png', 'jpeg'],
+                          );
+                          if (result?.files != null) {
+                            // setIconPath(File(result!.files.single.path!).path);
+                            setIconBytes(result!.files.single.bytes!);
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.edit,
+                          size: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            verticalSpaceRegular,
+            const Center(child: Text("Resolution: 514x514 (1:1 aspect ratio)")),
+            verticalSpaceRegular,
             TextFormField(
               controller: _appNameController,
               validator: AppUtils.fieldEmpty,
@@ -308,12 +331,37 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                 children: [
                   Expanded(
                     child: Text(
-                        "Upload keystore file ${widget.isUpdate ? "(leave blank to use original)" : "(if available)"}"),
+                      keystoreBytes != null
+                          ? uploadedKeystoreName ?? "Keystore Uploaded."
+                          : "Upload keystore file ${widget.isUpdate ? "(leave blank to use original)" : "(if available)"}",
+                    ),
                   ),
-                  TextButton.icon(
-                      onPressed: () {},
+                  if (keystoreBytes != null)
+                    IconButton(
+                      onPressed: () {
+                        setKeystoreBytes(null, null);
+                      },
+                      icon: const Icon(Icons.delete),
+                      color: Colors.red,
+                    )
+                  else
+                    TextButton.icon(
+                      onPressed: () async {
+                        FilePickerResult? result =
+                            await FilePicker.platform.pickFiles(
+                          type: FileType.custom,
+                          allowedExtensions: ['jks'],
+                        );
+                        if (result?.files != null) {
+                          setKeystoreBytes(
+                            result!.files.single.bytes,
+                            result.files.single.name,
+                          );
+                        }
+                      },
                       icon: const Icon(Icons.upload),
-                      label: const Text("Upload (JKS file)"))
+                      label: const Text("Upload (JKS file)"),
+                    )
                 ],
               ),
             ),
@@ -348,28 +396,29 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                             "versionNumber": _versionNumberController.text,
                           };
 
-                          if (widget.iconPath != null) {
+                          if (iconBytes != null) {
                             debugPrint(
                                 "Icon not uploaded. Asking to use default");
                           }
-                          if (widget.keystorePath != null) {
+                          if (keystoreBytes != null) {
                             debugPrint(
                                 "Keystore not uploaded. Asking to use default");
                           }
 
                           final filesData = {
-                            if (widget.iconPath != null)
-                              "appIcon":
-                                  MultipartFile.fromFileSync(widget.iconPath!),
-                            if (widget.keystorePath != null)
-                              "keystore": MultipartFile.fromFileSync(
-                                  widget.keystorePath!),
+                            if (iconBytes != null)
+                              "appIcon": MultipartFile.fromBytes(iconBytes!),
+                            if (keystoreBytes != null)
+                              "keystore":
+                                  MultipartFile.fromBytes(keystoreBytes!),
                           };
 
                           await ref
                               .read(buildsRepositoryProvider)
                               .addOrUpdatedNewBuild(
-                                recordId: widget.isUpdate ? "" : null,
+                                recordId: widget.isUpdate
+                                    ? widget.appPackage?.uid
+                                    : null,
                                 rawData: rawData,
                                 filesData: filesData,
                               );
@@ -381,28 +430,36 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                           _versionController.clear();
                           _versionNumberController.clear();
 
-                          scaffoldMessenger.showMaterialBanner(
-                            MaterialBanner(
-                              leading: const Icon(Icons.check_circle_outline),
-                              backgroundColor: Colors.green,
-                              content: Text(
-                                  "App ${widget.isUpdate ? "updated" : "added"} successfully. You'll get an email when it's ready. ${!widget.isUpdate ? 'Redirecting to Dashboard...' : ""}"),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    scaffoldMessenger
-                                        .hideCurrentMaterialBanner();
-                                  },
-                                  child: const Text("OK"),
-                                ),
-                              ],
-                            ),
-                          );
-                          Future.delayed(const Duration(seconds: 5), () {
-                            scaffoldMessenger.hideCurrentMaterialBanner();
-                            ref.read(selectedMenuProvider.notifier).state =
-                                SidebarMenuItem.dashboard;
-                          });
+                          setIconBytes(null);
+                          setKeystoreBytes(null);
+
+                          if (!widget.isUpdate) {
+                            scaffoldMessenger.showMaterialBanner(
+                              MaterialBanner(
+                                leading: const Icon(Icons.check_circle_outline),
+                                backgroundColor: Colors.green,
+                                content: Text(
+                                    "App ${widget.isUpdate ? "updated" : "added"} successfully. You'll get an email when it's ready. ${!widget.isUpdate ? 'Redirecting to Dashboard...' : ""}"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      scaffoldMessenger
+                                          .hideCurrentMaterialBanner();
+                                    },
+                                    child: const Text("OK"),
+                                  ),
+                                ],
+                              ),
+                            );
+                            Future.delayed(const Duration(seconds: 5), () {
+                              scaffoldMessenger.hideCurrentMaterialBanner();
+                              ref.read(selectedMenuProvider.notifier).state =
+                                  SidebarMenuItem.dashboard;
+                            });
+                          } else {
+                            ref.read(sidebarContentProvider.notifier).state =
+                                null;
+                          }
                         } on HttpException catch (e) {
                           debugPrint(
                               "Error (addOrUpdatedNewBuild | type: ${widget.isUpdate ? "update" : "new"}): ${e.message}");

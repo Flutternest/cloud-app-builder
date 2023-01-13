@@ -59,7 +59,7 @@ class DashboardPage extends ConsumerWidget {
                             .watch(sidebarContentProvider.notifier)
                             .state = null,
                         icon: const Icon(Icons.close)),
-                    sidePanel,
+                    Expanded(child: sidePanel),
                   ],
                 ),
               ),
