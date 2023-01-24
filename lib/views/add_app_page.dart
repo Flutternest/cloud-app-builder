@@ -320,51 +320,51 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                 hintText: "admin@betpredictions.com",
               ),
             ),
-            verticalSpaceMedium,
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[600]!),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      keystoreBytes != null
-                          ? uploadedKeystoreName ?? "Keystore Uploaded."
-                          : "Upload keystore file ${widget.isUpdate ? "(leave blank to use original)" : "(if available)"}",
-                    ),
-                  ),
-                  if (keystoreBytes != null)
-                    IconButton(
-                      onPressed: () {
-                        setKeystoreBytes(null, null);
-                      },
-                      icon: const Icon(Icons.delete),
-                      color: Colors.red,
-                    )
-                  else
-                    TextButton.icon(
-                      onPressed: () async {
-                        FilePickerResult? result =
-                            await FilePicker.platform.pickFiles(
-                          type: FileType.custom,
-                          allowedExtensions: ['jks'],
-                        );
-                        if (result?.files != null) {
-                          setKeystoreBytes(
-                            result!.files.single.bytes,
-                            result.files.single.name,
-                          );
-                        }
-                      },
-                      icon: const Icon(Icons.upload),
-                      label: const Text("Upload (JKS file)"),
-                    )
-                ],
-              ),
-            ),
+            // verticalSpaceMedium,
+            // Container(
+            //   padding: const EdgeInsets.all(10),
+            //   decoration: BoxDecoration(
+            //     border: Border.all(color: Colors.grey[600]!),
+            //     borderRadius: BorderRadius.circular(5),
+            //   ),
+            //   child: Row(
+            //     children: [
+            //       Expanded(
+            //         child: Text(
+            //           keystoreBytes != null
+            //               ? uploadedKeystoreName ?? "Keystore Uploaded."
+            //               : "Upload keystore file ${widget.isUpdate ? "(leave blank to use original)" : "(if available)"}",
+            //         ),
+            //       ),
+            //       if (keystoreBytes != null)
+            //         IconButton(
+            //           onPressed: () {
+            //             setKeystoreBytes(null, null);
+            //           },
+            //           icon: const Icon(Icons.delete),
+            //           color: Colors.red,
+            //         )
+            //       else
+            //         TextButton.icon(
+            //           onPressed: () async {
+            //             FilePickerResult? result =
+            //                 await FilePicker.platform.pickFiles(
+            //               type: FileType.custom,
+            //               allowedExtensions: ['jks'],
+            //             );
+            //             if (result?.files != null) {
+            //               setKeystoreBytes(
+            //                 result!.files.single.bytes,
+            //                 result.files.single.name,
+            //               );
+            //             }
+            //           },
+            //           icon: const Icon(Icons.upload),
+            //           label: const Text("Upload (JKS file)"),
+            //         )
+            //     ],
+            //   ),
+            // ),
             verticalSpaceMedium,
             ElevatedButton.icon(
               icon: isLoading
