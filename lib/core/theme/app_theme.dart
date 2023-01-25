@@ -4,6 +4,13 @@ import 'package:flutter/material.dart';
 class AppTheme {
   static final lightTheme = ThemeData.light().copyWith(
     brightness: Brightness.light,
+    appBarTheme: AppBarTheme(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      iconTheme: const IconThemeData(color: Colors.black),
+      titleTextStyle: TextStyle(
+          color: Colors.grey[800], fontSize: 20, fontWeight: FontWeight.w700),
+    ),
     inputDecorationTheme: const InputDecorationTheme(
       border: OutlineInputBorder(),
     ),
@@ -17,8 +24,16 @@ class AppTheme {
     ),
     colorScheme: lightColorScheme,
   );
+
   static final darkTheme = ThemeData.dark().copyWith(
     brightness: Brightness.dark,
+    appBarTheme: AppBarTheme(
+      backgroundColor: Colors.black,
+      elevation: 0,
+      iconTheme: const IconThemeData(color: Colors.white),
+      titleTextStyle: TextStyle(
+          color: Colors.grey[400], fontSize: 20, fontWeight: FontWeight.w700),
+    ),
     inputDecorationTheme: const InputDecorationTheme(
       border: OutlineInputBorder(),
     ),

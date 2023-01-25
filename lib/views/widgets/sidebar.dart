@@ -9,7 +9,9 @@ import '../../core/router/app_router.dart';
 import '../../core/utils/ui_helper.dart';
 
 class SideBar extends ConsumerWidget {
-  const SideBar({super.key});
+  const SideBar({super.key, this.shouldCloseDrawer = false});
+
+  final bool shouldCloseDrawer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,6 +40,9 @@ class SideBar extends ConsumerWidget {
             onTap: () {
               ref.read(selectedMenuProvider.notifier).state =
                   SidebarMenuItem.dashboard;
+              if (shouldCloseDrawer) {
+                AppRouter.pop();
+              }
             },
           ),
           ListTile(
@@ -47,6 +52,9 @@ class SideBar extends ConsumerWidget {
             onTap: () {
               ref.read(selectedMenuProvider.notifier).state =
                   SidebarMenuItem.addApp;
+              if (shouldCloseDrawer) {
+                AppRouter.pop();
+              }
             },
           ),
           const Spacer(),
