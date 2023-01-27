@@ -95,6 +95,14 @@ class HistoryTable extends ConsumerWidget {
                 throw 'Could not launch $url';
               }
             },
+            onAabDownloadTap: (buildItem) async {
+              if (buildItem.aabBuildUrl == null) return;
+
+              final url = Uri.parse(buildItem.aabBuildUrl!);
+              if (!await launchUrl(url)) {
+                throw 'Could not launch $url';
+              }
+            },
           ),
         );
       },
@@ -115,12 +123,14 @@ class HistoryDataTableSource extends DataTableSource {
   final BuildItemCallback onEditTap;
   final BuildItemCallback onZipDownloadTap;
   final BuildItemCallback onApkDownloadTap;
+  final BuildItemCallback onAabDownloadTap;
   final BuildItemCallback onDeleteTap;
 
   HistoryDataTableSource({
     required this.finalList,
     required this.onEditTap,
     required this.onApkDownloadTap,
+    required this.onAabDownloadTap,
     required this.onZipDownloadTap,
     required this.onDeleteTap,
   });
@@ -163,14 +173,21 @@ class HistoryDataTableSource extends DataTableSource {
                 onPressed: inProgress ? null : () => onEditTap.call(item),
               ),
               IconButton(
-                icon: const Icon(Icons.file_download),
+                icon: const Icon(Icons.install_mobile_outlined),
                 iconSize: 20,
                 tooltip: "Download Signed APK",
                 onPressed:
                     inProgress ? null : () => onApkDownloadTap.call(item),
               ),
               IconButton(
-                icon: const Icon(Icons.cloud_download_outlined),
+                icon: const Icon(Icons.file_download),
+                iconSize: 20,
+                tooltip: "Download Signed App Bundle",
+                onPressed:
+                    inProgress ? null : () => onAabDownloadTap.call(item),
+              ),
+              IconButton(
+                icon: const Icon(Icons.folder_zip_outlined),
                 iconSize: 20,
                 tooltip: "Download ZIP Source Code",
                 onPressed:

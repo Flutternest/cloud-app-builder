@@ -15,6 +15,7 @@ class BuildItem extends Equatable {
   final String? keystoreUrl;
   final String? status;
   final String? buildUrl;
+  final String? aabBuildUrl;
 
   const BuildItem({
     this.uid,
@@ -31,6 +32,7 @@ class BuildItem extends Equatable {
     this.keystoreUrl,
     this.status,
     this.buildUrl,
+    this.aabBuildUrl,
   });
 
   factory BuildItem.fromJson(Map<String, dynamic> json) => BuildItem(
@@ -52,6 +54,7 @@ class BuildItem extends Equatable {
         keystoreUrl: json['keystore_url'] as String?,
         status: json['status'] as String?,
         buildUrl: json['build_url'] as String?,
+        aabBuildUrl: json['aab_build_url'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -69,6 +72,7 @@ class BuildItem extends Equatable {
         'keystore_url': keystoreUrl,
         'status': status,
         'build_url': buildUrl,
+        'aab_build_url': aabBuildUrl,
       };
 
   BuildItem copyWith({
@@ -86,6 +90,7 @@ class BuildItem extends Equatable {
     String? keystoreUrl,
     String? status,
     String? buildUrl,
+    String? aabBuildUrl,
   }) {
     return BuildItem(
       uid: uid ?? this.uid,
@@ -102,6 +107,7 @@ class BuildItem extends Equatable {
       keystoreUrl: keystoreUrl ?? this.keystoreUrl,
       status: status ?? this.status,
       buildUrl: buildUrl ?? this.buildUrl,
+      aabBuildUrl: aabBuildUrl ?? this.aabBuildUrl,
     );
   }
 
@@ -125,6 +131,7 @@ class BuildItem extends Equatable {
       keystoreUrl,
       status,
       buildUrl,
+      aabBuildUrl,
     ];
   }
 }
