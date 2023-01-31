@@ -207,8 +207,8 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                   return 'Please enter a valid app bundle identifier';
                 }
 
-                if (!RegExp(
-                        r'^([A-Za-z]{1}[A-Za-z\d_]*\.)+[A-Za-z][A-Za-z\d_]*$')
+                if (!RegExp(r'^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
+                        caseSensitive: false)
                     .hasMatch(value)) {
                   return 'Invalid bundle identifier';
                 }
