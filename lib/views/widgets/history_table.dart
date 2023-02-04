@@ -67,6 +67,31 @@ class HistoryTable extends ConsumerWidget {
               if (buildItem.uid == null) return;
               final messenger = ScaffoldMessenger.of(context);
 
+              final shouldDelete = await showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text("Delete Build"),
+                      content: Text(
+                          "Are you sure you want to delete ${buildItem.applicationName} (${buildItem.bundleId})?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text("No"),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          style: TextButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white),
+                          child: const Text("Yes, delete"),
+                        ),
+                      ],
+                    );
+                  });
+
+              if (shouldDelete == null || !shouldDelete) return;
+
               await ref.read(historyController).deleteBuildItem(buildItem.uid!);
 
               showSnackBarWithMessenger(
