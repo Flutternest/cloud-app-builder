@@ -88,7 +88,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         if (_emailCtrl.text.trim() == 'admin@awabuilder.com' &&
-                            _passCtrl.text.trim() == 'admin123') {
+                            _passCtrl.text.trim() ==
+                                r'6w6IowCBbb7W@vFKtF$6^*f5F') {
                           ref.read(prefsProvider).setBool("isLoggedIn", true);
                           AppRouter.navigateAndRemoveUntil(AppRoutes.menuPage);
                         } else {
