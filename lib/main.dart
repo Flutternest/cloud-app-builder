@@ -35,14 +35,19 @@ class MyApp extends ConsumerWidget {
     final theme = ref.watch(themeBrightnessProvider) == Brightness.dark
         ? AppTheme.darkTheme
         : AppTheme.lightTheme;
-    final isLoggedIn = ref.watch(prefsProvider).getBool('isLoggedIn') ?? false;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Automation Wrapper App Builder',
       theme: theme,
-      home: isLoggedIn ? const MenuPage() : const LoginPage(),
-      onGenerateRoute: AppRouter.onGenerateRoute,
+      onGenerateRoute: (settings) {
+        final isLoggedIn =
+            ref.read(prefsProvider).getBool('isLoggedIn') ?? false;
+        if (settings.name != AppRoutes.loginPage && !isLoggedIn) {
+          return null;
+        }
+        return AppRouter.onGenerateRoute(settings);
+      },
       navigatorKey: AppRouter.navigatorKey,
     );
   }

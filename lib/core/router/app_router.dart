@@ -4,11 +4,10 @@ import 'package:automation_wrapper_builder/views/dashboard_page.dart';
 import 'package:automation_wrapper_builder/views/login_page.dart';
 import 'package:automation_wrapper_builder/views/menu_page.dart';
 import 'package:flutter/material.dart';
-
 import '../../views/add_app_page.dart';
 
 class AppRoutes {
-  static const loginPage = '/login-page';
+  static const loginPage = '/';
   static const menuPage = '/menu-page';
   static const dashboardPage = '/dashboard-page';
   static const addAppPage = '/add-app-page';
@@ -16,6 +15,7 @@ class AppRoutes {
 
 class AppRouter {
   static final navigatorKey = GlobalKey<NavigatorState>();
+
   static Future<dynamic> navigateToPage(String routeName,
       {bool replace = false, dynamic arguments}) async {
     log("Navigation: $routeName | Type: Push | Replace: $replace | Args: $arguments");

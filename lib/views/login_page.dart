@@ -90,7 +90,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         if (_emailCtrl.text.trim() == 'admin@awabuilder.com' &&
                             _passCtrl.text.trim() == 'admin123') {
                           ref.read(prefsProvider).setBool("isLoggedIn", true);
-                          AppRouter.navigateToPage(AppRoutes.menuPage);
+                          AppRouter.navigateAndRemoveUntil(AppRoutes.menuPage);
                         } else {
                           showSnackBar(context,
                               message:
