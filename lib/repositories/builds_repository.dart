@@ -8,20 +8,33 @@ import '../constants/app_configs.dart';
 import '../services/http/http_service.dart';
 import '../services/http/http_service_provider.dart';
 
-final buildsRepositoryProvider = Provider<BuildsRepository>((ref) {
+final builderRepositoryProvider = Provider<BuilderRepository>((ref) {
   final http = ref.watch(httpServiceProvider);
   final prefs = ref.watch(prefsProvider);
 
-  return BuildsRepository(http, prefs);
+  return BuilderRepository(http, prefs);
 });
 
-class BuildsRepository {
+class BuilderRepository {
   final HttpService httpService;
   final SharedPreferences prefsProvider;
 
-  BuildsRepository(this.httpService, this.prefsProvider);
+  BuilderRepository(this.httpService, this.prefsProvider);
 
   String get path => Configs.apiBaseUrl;
+
+  Future<void> login({
+    required String email,
+    required String password,
+  }) async {
+    await httpService.post(
+      "$path/login",
+      data: FormData.fromMap({
+        "email": email,
+        "password": password,
+      }),
+    );
+  }
 
   /// Add a new build
   ///

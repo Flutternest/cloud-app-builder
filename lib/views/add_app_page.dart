@@ -420,7 +420,7 @@ class _AddAppFormState extends ConsumerState<AddAppForm> {
                           };
 
                           await ref
-                              .read(buildsRepositoryProvider)
+                              .read(builderRepositoryProvider)
                               .addOrUpdatedNewBuild(
                                 recordId: widget.isUpdate
                                     ? widget.appPackage?.uid
