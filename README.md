@@ -3,12 +3,13 @@
 <p align="center">
   <img src="https://github.com/Flutternest/cloud-app-builder/blob/main/assets/images/logo_dark.png?raw=true" alt="Logo">
 </p>
-This repository contains the source code for MyApp, a comprehensive solution designed to streamline your daily tasks and enhance productivity. The app offers a user-friendly interface, robust features, and seamless integration with various services.
+This repository contains the source code for builder, a comprehensive solution designed to streamline your daily tasks and enhance productivity. The app offers a user-friendly interface, robust features, and seamless integration with various services.
 
 
 ## Video Demo
-Check out our video demo to see MyApp in action:
-![demo](https://github.com/Flutternest/cloud-app-builder/raw/refs/heads/main/demo/viddemo.mov)
+Check out our video demo to see builder in action:
+
+https://github.com/Flutternest/cloud-app-builder/raw/refs/heads/main/demo/viddemo.mov
 
 ## Table of Contents
 - [Features](#features)
@@ -66,7 +67,7 @@ To get started with the project, follow these steps:
     ```
 
 ## Usage
-To use MyApp, simply run the project on an Android or iOS device. The app will allow you to manage your tasks efficiently, set reminders, and stay productive.
+To use builder, simply run the project on an Android or iOS device. The app will allow you to manage your tasks efficiently, set reminders, and stay productive.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
