@@ -1,5 +1,3 @@
-# Cloud Wrapper Builder
-
 <p align="center">
   <img src="https://github.com/Flutternest/cloud-app-builder/blob/main/assets/images/logo_dark.png?raw=true" alt="Logo">
 </p>
@@ -8,8 +6,15 @@ This repository contains the source code for builder, a comprehensive solution d
 
 ## Video Demo
 Check out our video demo to see builder in action:
-
 https://github.com/Flutternest/cloud-app-builder/raw/refs/heads/main/demo/viddemo.mov
+
+## Screenshots
+
+| Screenshot 1 | Screenshot 2 |
+|--------------|--------------|
+| ![Screenshot 1](https://github.com/Flutternest/cloud-app-builder/blob/main/demo/b1.png?raw=true) | ![Screenshot 2](https://github.com/Flutternest/cloud-app-builder/blob/main/demo/b2.png?raw=true) |
+| Screenshot 3 | Screenshot 4 |
+| ![Screenshot 3](https://github.com/Flutternest/cloud-app-builder/blob/main/demo/b3.png?raw=true) | ![Screenshot 4](https://github.com/Flutternest/cloud-app-builder/blob/main/demo/b4.png?raw=true) |
 
 ## Table of Contents
 - [Features](#features)
